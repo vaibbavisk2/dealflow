@@ -1,16 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>CRE Add-in</title>
-  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
-  <script defer src="./taskpane.js"></script>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>body{font:14px system-ui;margin:16px}</style>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>CRE Deal Helper</title>
+    <script type="text/javascript" src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .btn {
+            background: #0078d4;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 8px 0;
+            width: 100%;
+            display: block;
+        }
+        .btn:hover {
+            background: #106ebe;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #0078d4;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+        h2 {
+            margin: 0 0 20px 0;
+            color: #323130;
+            font-size: 18px;
+        }
+        .emoji {
+            font-size: 16px;
+            margin-right: 8px;
+        }
+    </style>
 </head>
 <body>
-  <h3>CRE Deal Helper (PoC)</h3>
-  <button id="btn">Get subject</button>
-  <pre id="out"></pre>
+    <div class="container">
+        <h2><span class="emoji">🏢</span>CRE Deal Helper</h2>
+        
+        <button class="btn" onclick="getEmailSubject()">
+            <span class="emoji">📧</span> Get Email Subject
+        </button>
+        
+        <button class="btn" onclick="getEmailSender()">
+            <span class="emoji">👤</span> Get Sender Info
+        </button>
+        
+        <button class="btn" onclick="getEmailBody()">
+            <span class="emoji">📄</span> Get Email Body Preview
+        </button>
+        
+        <div id="output" class="output">
+            <p>👆 Click a button above to analyze this email</p>
+        </div>
+    </div>
+
+    <script>
+        let mailbox;
+        
+        Office.onReady((info) => {
+            if (info.host === Office.HostType.Outlook) {
+                mailbox = Office.context.mailbox;
+                document.getElementById('output').innerHTML = '✅ Add-in loaded successfully! Ready to analyze emails.';
+            }
+        });
+
+        function getEmailSubject() {
+            if (!mailbox || !mailbox.item) {
+                document.getElementById('output').innerHTML = '❌ No email selected or mailbox not available.';
+                return;
+            }
+            
+            const subject = mailbox.item.subject;
+            document.getElementById('output').innerHTML = `
+                <strong>📧 Email Subject:</strong><br>
+                ${subject || 'No subject'}
+            `;
+        }
+
+        function getEmailSender() {
+            if (!mailbox || !mailbox.item) {
+                document.getElementById('output').innerHTML = '❌ No email selected or mailbox not available.';
+                return;
+            }
+            
+            const from = mailbox.item.from;
+            document.getElementById('output').innerHTML = `
+                <strong>👤 Sender Information:</strong><br>
+                <strong>Name:</strong> ${from.displayName || 'Unknown'}<br>
+                <strong>Email:</strong> ${from.emailAddress || 'Unknown'}
+            `;
+        }
+
+        function getEmailBody() {
+            if (!mailbox || !mailbox.item) {
+                document.getElementById('output').innerHTML = '❌ No email selected or mailbox not available.';
+                return;
+            }
+            
+            mailbox.item.body.getAsync('text', function(result) {
+                if (result.status === Office.AsyncResultStatus.Succeeded) {
+                    const bodyPreview = result.value.substring(0, 300);
+                    document.getElementById('output').innerHTML = `
+                        <strong>📄 Email Body Preview:</strong><br>
+                        ${bodyPreview}${result.value.length > 300 ? '...' : ''}
+                    `;
+                } else {
+                    document.getElementById('output').innerHTML = '❌ Could not read email body.';
+                }
+            });
+        }
+    </script>
 </body>
 </html>
