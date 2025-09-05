@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<OfficeApp xmlns="http://schemas.microsoft.com/office/appforoffice/1.1"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xmlns:bt="http://schemas.microsoft.com/office/officeappbasictypes/1.0"
+           xmlns:mailappor="http://schemas.microsoft.com/office/mailappversionoverrides/1.1"
+           xsi:type="MailApp">
+
+  <Id>f1b6a5f3-0c2a-4eaa-9a21-000000000001</Id>
+  <Version>1.0.0.0</Version>
+  <ProviderName>Your Name</ProviderName>
+  <DefaultLocale>en-US</DefaultLocale>
+  <DisplayName DefaultValue="CRE Deal Helper" />
+  <Description DefaultValue="PoC: button opens a task pane and reads subject." />
+  <IconUrl DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/favicon.png" />
+  <HighResolutionIconUrl DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/favicon.png" />
+
+  <SupportUrl DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/index.html" />
+
+  <AppDomains>
+    <AppDomain>https://{GITHUB_USERNAME}.github.io</AppDomain>
+  </AppDomains>
+
+  <Hosts>
+    <Host Name="Mailbox"/>
+  </Hosts>
+
+  <Requirements>
+    <Sets DefaultMinVersion="1.5">
+      <Set Name="Mailbox" />
+    </Sets>
+  </Requirements>
+
+  <FormSettings>
+    <Form xsi:type="ItemRead">
+      <DesktopSettings>
+        <SourceLocation DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/taskpane.html"/>
+      </DesktopSettings>
+    </Form>
+  </FormSettings>
+
+  <Permissions>ReadItem</Permissions>
+
+  <VersionOverrides xsi:type="mailappor:VersionOverrides" Version="1.0">
+    <mailappor:Requirements>
+      <mailappor:Sets DefaultMinVersion="1.5">
+        <mailappor:Set Name="Mailbox"/>
+      </mailappor:Sets>
+    </mailappor:Requirements>
+
+    <mailappor:Hosts>
+      <mailappor:Host Name="Mailbox">
+        <mailappor:DesktopFormFactor>
+          <mailappor:FunctionFile resid="residFunctionFile" />
+          <mailappor:ExtensionPoint xsi:type="MessageReadCommandSurface">
+            <mailappor:OfficeTab id="TabDefault">
+              <mailappor:Group id="msgread.group" label="CRE Tools">
+                <mailappor:Control xsi:type="Button" id="msgread.launchPane">
+                  <mailappor:Label resid="residButtonLabel"/>
+                  <mailappor:Supertip>
+                    <mailappor:Title resid="residButtonLabel"/>
+                    <mailappor:Description resid="residButtonDesc"/>
+                  </mailappor:Supertip>
+                  <mailappor:Icon>
+                    <mailappor:IconSize16 resid="residIcon16"/>
+                    <mailappor:IconSize32 resid="residIcon32"/>
+                  </mailappor:Icon>
+                  <mailappor:Action xsi:type="ShowTaskpane">
+                    <mailappor:SourceLocation resid="residTaskPaneUrl"/>
+                  </mailappor:Action>
+                </mailappor:Control>
+              </mailappor:Group>
+            </mailappor:OfficeTab>
+          </mailappor:ExtensionPoint>
+        </mailappor:DesktopFormFactor>
+      </mailappor:Host>
+    </mailappor:Hosts>
+
+    <mailappor:Resources>
+      <mailappor:Images>
+        <mailappor:Image id="residIcon16" DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/favicon.png"/>
+        <mailappor:Image id="residIcon32" DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/favicon.png"/>
+      </mailappor:Images>
+      <mailappor:Urls>
+        <mailappor:Url id="residTaskPaneUrl" DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/taskpane.html"/>
+        <mailappor:Url id="residFunctionFile" DefaultValue="https://{GITHUB_USERNAME}.github.io/{REPO}/function-file.html"/>
+      </mailappor:Urls>
+      <mailappor:ShortStrings>
+        <mailappor:String id="residButtonLabel" DefaultValue="Open CRE Pane"/>
+      </mailappor:ShortStrings>
+      <mailappor:LongStrings>
+        <mailappor:String id="residButtonDesc" DefaultValue="Open the task pane for this message."/>
+      </mailappor:LongStrings>
+    </mailappor:Resources>
+  </VersionOverrides>
+</OfficeApp>
